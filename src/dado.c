@@ -12,3 +12,15 @@ void lfsr16(unsigned short *rnd_number) {
     	(*rnd_number) >>= 1;
 	}
 }
+
+void display_time(unsigned int time) {
+	unsigned int i, j;
+	for (i = 0; i < time; i++)
+	{
+		for (j = 0; j < 5000; j++)
+		{
+		}
+		
+	}
+	
+}
