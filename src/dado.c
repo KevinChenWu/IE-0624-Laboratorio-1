@@ -1,80 +1,69 @@
 #include <pic14/pic12f683.h>
 
+// Se desabilita el MCLR (se pone el MCLRE en OFF)
+unsigned int __at 0x2007 __CONFIG = (_MCLRE_OFF);
+
 void lfsr16(unsigned short *rnd_number);
 void display_time(unsigned int time);
 
 void main(void) {
-	// Se pone GP0, GP1, GP2, GP3 y GP4 como salidas
-	// Se pone GP5 como entrada
+	// Se pone GP0, GP1, GP2, GP4 y GP5 como salidas
+	// Se pone GP3 como entrada
 	// Se pone los demás pines como salidas
 	TRISIO = 0b00001000;
 
 	// Se pone las salidas en bajo
 	GPIO = 0b00000000;
 
-	unsigned int time = 1000;
+	unsigned int time = 20000;
 	unsigned short rnd_number = 1;
-	unsigned int dice_number = 0;
+	unsigned short *ptr_rnd = &rnd_number;
+	unsigned short dice_number = 0;
 
 	while (1)
 	{
-		lfsr16(&rnd_number);
-		if (GP3)
-		{
-			dice_number = 1 + (rnd_number % 6);
-			switch (dice_number)
-			{
+		if (GPIO == 0b00001000) {
+			switch (dice_number) {
 			case 1:
-				GP1 = ~GP1;
+				GPIO = 0b00000010;
 				display_time(time);
-				GP1 = ~GP1;
+				GPIO = 0b00000000;
 				break;
-			
 			case 2:
-				GP2 = ~GP2;
+				GPIO = 0b00000100;
 				display_time(time);
-				GP2 = ~GP2;
+				GPIO = 0b00000000;
 				break;
 			case 3:
-				GP1 = ~GP1;
-				GP2 = ~GP2;
+				GPIO = 0b00000110;
 				display_time(time);
-				GP1 = ~GP1;
-				GP2 = ~GP2;
+				GPIO = 0b00000000;
 				break;
 			case 4:
-				GP2 = ~GP2;
-				GP4 = ~GP4;
+				GPIO = 0b00010100;
 				display_time(time);
-				GP2 = ~GP3;
-				GP4 = ~GP4;
+				GPIO = 0b00000000;
 				break;
 			case 5:
-				GP1 = ~GP1;
-				GP2 = ~GP2;
-				GP4 = ~GP4;
+				GPIO = 0b00010110;
 				display_time(time);
-				GP1 = ~GP1;
-				GP2 = ~GP3;
-				GP4 = ~GP4;
+				GPIO = 0b00000000;
 				break;
 			case 6:
-				GP2 = ~GP2;
-				GP4 = ~GP4;
-				GP5 = ~GP5;
+				GPIO = 0b00110100;
 				display_time(time);
-				GP2 = ~GP3;
-				GP4 = ~GP4;
-				GP5 = ~GP5;
+				GPIO = 0b00000000;
 				break;
 			default:
 				break;
 			}
 		}
-		
+		else {
+			GPIO = 0b00000000;
+			lfsr16(ptr_rnd);
+			dice_number = 1 + (rnd_number % 6);
+		}
 	}
-	
-
 }
 
 void lfsr16(unsigned short *rnd_number) {
@@ -89,12 +78,7 @@ void lfsr16(unsigned short *rnd_number) {
 
 void display_time(unsigned int time) {
 	unsigned int i, j;
-	for (i = 0; i < time; i++)
-	{
-		for (j = 0; j < 5000; j++)
-		{
-		}
-		
+	for (i = 0; i < 1000*time; i++) {
+		for (j = 0; j < 1000*time; j++);
 	}
-	
 }
