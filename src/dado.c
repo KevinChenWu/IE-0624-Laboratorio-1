@@ -22,7 +22,7 @@ void main(void) {
 
 	while (1)
 	{
-		if (GPIO == 0b00001000) {
+		if (GP3 == 1) {
 			switch (dice_number) {
 			case 1:
 				GPIO = 0b00000010;
