@@ -1,7 +1,7 @@
 #include <pic14/pic12f683.h>
 
 // Se desabilita el MCLR (se pone el MCLRE en OFF)
-unsigned int __at 0x2007 __CONFIG = (_MCLRE_OFF);
+unsigned int __at 0x2007 __CONFIG = (_MCLRE_OFF&_WDTE_OFF);
 
 void lfsr16(unsigned short *rnd_number);
 void display_time(unsigned int time);
@@ -15,7 +15,8 @@ void main(void) {
 	// Se pone las salidas en bajo
 	GPIO = 0b00000000;
 
-	unsigned int time = 20000;
+	// Con time = 1000 es aprox 1 segundo de delay en simulador
+	unsigned int time = 2000;
 	unsigned short rnd_number = 1;
 	unsigned short *ptr_rnd = &rnd_number;
 	unsigned short dice_number = 0;
@@ -78,7 +79,7 @@ void lfsr16(unsigned short *rnd_number) {
 
 void display_time(unsigned int time) {
 	unsigned int i, j;
-	for (i = 0; i < 1000*time; i++) {
-		for (j = 0; j < 1000*time; j++);
+	for (i = 0; i < time; i++) {
+		for (j = 0; j < 256; j++);
 	}
 }
