@@ -1,11 +1,13 @@
 #include <pic14/pic12f683.h>
 
-// Se desabilita el MCLR (se pone el MCLRE en OFF)
+// Se desabilita el MCLR (se pone el MCLRE en OFF) y el WDT (se pone el WDTE en OFF)
 unsigned int __at 0x2007 __CONFIG = (_MCLRE_OFF&_WDTE_OFF);
 
+// Declaración de las funciones
 void lfsr16(unsigned short *rnd_number);
 void display_time(unsigned int time);
 
+// Declaración de la función main
 void main(void) {
 	// Se pone GP0, GP1, GP2, GP4 y GP5 como salidas
 	// Se pone GP3 como entrada
@@ -21,9 +23,17 @@ void main(void) {
 	unsigned short *ptr_rnd = &rnd_number;
 	unsigned short dice_number = 0;
 
+	// Ciclo infinito
 	while (1)
 	{
-		if (GP3 == 1) {
+		// Si el botón es presionado
+		if (GP3) {
+			// Se hace una comparación de dice_number con los casos
+			// En caso de coincidir se ejecuta lo siguiente:
+			// Se pone el o los pines correspondientes en alto para encender
+			// el o los LEDs correspondiente
+			// Se espera un cierto tiempo
+			// Se pone en bajo el o los pines encendidos
 			switch (dice_number) {
 			case 1:
 				GPIO = 0b00000010;
@@ -60,19 +70,28 @@ void main(void) {
 			}
 		}
 		else {
+			// Se mantiene las salidas en bajo
 			GPIO = 0b00000000;
+			// Se genera un nuevo número aleatorio
 			lfsr16(ptr_rnd);
+			// Se ajusta el número aleatorio a
+			// un valor entre 1 y 6
 			dice_number = 1 + (rnd_number % 6);
 		}
 	}
 }
 
 void lfsr16(unsigned short *rnd_number) {
+	// Se pregunta si el último bit es 1
 	if ((*rnd_number) & 1) {
+		// Se desplaza el número un bit a la derecha
     	(*rnd_number) >>= 1;
+		// Se hace un XOR del número con la máscara y
+		// se actualiza a sí mismp
     	(*rnd_number) ^= (1<<15) + (1<<14) + (1<<12) + (1<<3);
 	}
 	else {
+		// Se desplaza el número un bit a la derecha
     	(*rnd_number) >>= 1;
 	}
 }
