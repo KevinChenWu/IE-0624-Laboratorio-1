@@ -87,12 +87,12 @@ void lfsr16(unsigned short *rnd_number) {
 		// Se desplaza el número un bit a la derecha
 		(*rnd_number) >>= 1;
 		// Se hace un XOR del número con la máscara y
-		// se actualiza a sí mismp
+		// se actualiza a sí mismo
 		(*rnd_number) ^= (1<<15) + (1<<14) + (1<<12) + (1<<3);
 	}
 	else {
 		// Se desplaza el número un bit a la derecha
-    	(*rnd_number) >>= 1;
+		(*rnd_number) >>= 1;
 	}
 }
 
